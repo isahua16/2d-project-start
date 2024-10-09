@@ -623,7 +623,6 @@ offset = Vector2(-5.515, 0)
 [node name="SquareUpperLegR" type="Sprite2D" parent="Colorizer"]
 position = Vector2(9.20459, -29.9444)
 rotation = -0.213676
-scale = Vector2(1, 1)
 texture = ExtResource("5_q2t1e")
 offset = Vector2(0, 6)
 
