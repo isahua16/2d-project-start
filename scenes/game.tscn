@@ -1,35 +1,116 @@
-[gd_scene load_steps=4 format=3 uid="uid://8g7u8gv27waq"]
+[gd_scene load_steps=5 format=3 uid="uid://8g7u8gv27waq"]
 
 [ext_resource type="PackedScene" uid="uid://bi6r3jrp3yxw7" path="res://scenes/player.tscn" id="1_c201o"]
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_kgn27"]
 [ext_resource type="PackedScene" uid="uid://bywexfggtws8l" path="res://scenes/tree.tscn" id="2_xf0ts"]
-[ext_resource type="PackedScene" uid="uid://x5af31t8kgxi" path="res://scenes/enemy.tscn" id="3_uujdy"]
+
+[sub_resource type="Curve2D" id="Curve2D_glb03"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, -280, -18, 0, 0, 0, 0, -283, -20, 0, 0, 0, 0, 2042, -15, 0, 0, 0, 0, 2042, 1292, 0, 0, 0, 0, -286, 1278, 0, 0, 0, 0, -280, -18)
+}
+point_count = 6
 
 [node name="Game" type="Node2D"]
 y_sort_enabled = true
 position = Vector2(176, -53)
+script = ExtResource("1_kgn27")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="CanvasLayer"]
-offset_top = 2.0
-offset_right = 1920.0
-offset_bottom = 1082.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="Player" parent="." instance=ExtResource("1_c201o")]
 position = Vector2(976, 642)
 
-[node name="Enemy" parent="." instance=ExtResource("3_uujdy")]
-position = Vector2(571, 676)
+[node name="Path2D" type="Path2D" parent="Player"]
+position = Vector2(-976, -642)
+curve = SubResource("Curve2D_glb03")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="Player/Path2D"]
+unique_name_in_owner = true
+position = Vector2(-280, -18)
+rotation = -2.55359
 
 [node name="tree" parent="." instance=ExtResource("2_xf0ts")]
 position = Vector2(797, 607)
 
-[node name="Enemy2" parent="." instance=ExtResource("3_uujdy")]
-position = Vector2(811, 920)
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.439
+autostart = true
 
-[node name="Enemy3" parent="." instance=ExtResource("3_uujdy")]
-position = Vector2(1265, 421)
+[node name="GameOver" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+visible = false
 
-[node name="Enemy4" parent="." instance=ExtResource("3_uujdy")]
-position = Vector2(914, 388)
+[node name="ColorRect" type="ColorRect" parent="GameOver"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 0.772549)
+
+[node name="Label" type="Label" parent="GameOver/ColorRect"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -47.0
+offset_top = -11.5
+offset_right = 45.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 135
+text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="RestartButton" type="Button" parent="GameOver/ColorRect"]
+process_mode = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -255.0
+offset_top = 124.0
+offset_right = 279.0
+offset_bottom = 237.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 76
+action_mode = 0
+text = "RESTART"
+
+[node name="QuitButton" type="Button" parent="GameOver/ColorRect"]
+process_mode = 2
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -255.0
+offset_top = 252.0
+offset_right = 280.0
+offset_bottom = 367.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 76
+action_mode = 0
+text = "QUIT"
+
+[connection signal="player_died" from="Player" to="." method="_on_player_player_died"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]
+[connection signal="button_down" from="GameOver/ColorRect/RestartButton" to="." method="_on_restart_button_button_down"]
+[connection signal="pressed" from="GameOver/ColorRect/RestartButton" to="." method="_on_restart_button_pressed"]
+[connection signal="pressed" from="GameOver/ColorRect/QuitButton" to="." method="_on_quit_button_pressed"]
